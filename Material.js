@@ -1,7 +1,7 @@
 export class Material{
-    constructor(titulo, ejemplares){
+    constructor(titulo, disponibles){
 
         this.titulo = titulo;
-        this.ejemplar = ejemplares;
+        this.ejemplar = disponibles;
     }
 }
