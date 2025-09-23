@@ -1,4 +1,3 @@
-import { prependListener } from "process";
 import { Personas } from "./Personas.js"
 
 export class Administrador extends Personas{
@@ -7,10 +6,7 @@ export class Administrador extends Personas{
         this.cargo = cargo;
     }
 }
-function crearSocio(){
-    let nom = preguntar("Nombre: ");
-    let dni = preguntar("DNI: ");
-    let cargo = preguntar("Cargo: ")
-    let nuevoAdmin = new Administrador(nom, dni);
+function crearSocio(nom, dni, cargo){
+    let nuevoAdmin = new Administrador(nom, dni, cargo);
     return nuevoAdmin;
 }

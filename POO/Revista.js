@@ -7,10 +7,7 @@ export class Revista extends Material{
     }
 }
 
-function crearRevista(){
-    let tit = preguntar("Introduce titulo");
-    let dispo = preguntar("Introduce los ejemplares disponibles: ");
-    let fecha = preguntar("Introduce la fecha: ");
+function crearRevista(tit, dispo, fecha){
     let nuevaRevista = new Revista(tit, dispo, fecha);
     return nuevaRevista;
 }

@@ -8,11 +8,7 @@ export class Pelicula extends Material{
     }
 }
 
-function crearPelicula(){
-    let tit = preguntar("Introduce titulo");
-    let dispo = preguntar("Introduce los ejemplares disponibles: ");
-    let dir = preguntar("Introduce el director: ");
-    let gen = preguntar("Introduce el genero: ");
+function crearPelicula(tit, dispo, dir, gen){
     let nuevaPeli = new Pelicula(tit, dispo, dir, gen);
     return nuevaPeli;
 }

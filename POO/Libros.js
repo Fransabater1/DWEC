@@ -1,4 +1,3 @@
-import { prependListener } from "process";
 import {Material} from "./Material.js"
 
 export class Libros extends Material{
@@ -8,10 +7,7 @@ export class Libros extends Material{
     }
 }
 
-function crearLibro(){
-    let tit = preguntar("Introduce titulo");
-    let dispo = preguntar("Introduce los ejemplares disponibles: ");
-    let aut = preguntar("Introduce el autor: ");
+function crearLibro(tit, dispo, aut){
     let nuevoLibro = new Libros(tit, dispo, aut);
     return nuevoLibro;
 }

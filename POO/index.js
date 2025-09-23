@@ -53,42 +53,57 @@ do{
 
     switch (opcion){
         case 1:
-            let libroCreado = crearLibro();
+            let tit = await preguntar("Introduce titulo");
+            let dispo = await preguntar("Introduce los ejemplares disponibles: ");
+            let aut = await preguntar("Introduce el autor: ");
+            let libroCreado = crearLibro(tit, dispo, aut);
             libroCreado.push(libros);
             break;
 
         case 2:
-            let revistaCreada = crearRevista();
+            let titu = await preguntar("Introduce titulo");
+            let dispon = await preguntar("Introduce los ejemplares disponibles: ");
+            let fecha = await preguntar("Introduce la fecha: ");
+            let revistaCreada = crearRevista(titu, dispon, fecha);
             revistaCreada.push(revistas);
             break;
 
         case 3:
-            let peliCreada = crearPelicua();
+            let titulo = await preguntar("Introduce titulo");
+            let disponi = await preguntar("Introduce los ejemplares disponibles: ");
+            let dir = await preguntar("Introduce el director: ")
+            let gen = await preguntar("Introduce el genero: ")
+            let peliCreada = crearPelicua(tit, dispo, dir, gen);
             peliCreada.push(pelis);
             break;
 
         case 4:
-            let socioCreado = crearSocio();
+            let nom = await preguntar("Nombre: ");
+            let dni = await preguntar("DNI: ");
+            let socioCreado = crearSocio(nom, dni);
             socioCreado.push(socios);
             break;
 
         case 5:
-            let adminCreado = crearAdmin();
+            let nomb =  preguntar("Nombre: ");
+            let DNI = preguntar("DNI: ");
+            let cargo = preguntar("Cargo: ")
+            let adminCreado = crearAdmin(nom, dni, cargo);
             adminCreado.push(admins);
             break;
 
         case 6:
-            let preg = preguntar("1-Libro / 2-Pelicula / 3-Revista: ")
+            let preg = await preguntar("1-Libro / 2-Pelicula / 3-Revista: ")
             if (preg == 1){
-                let m = preguntar("Introduce el nombre del libro: ");
+                let m = await preguntar("Introduce el nombre del libro: ");
                 let p = validaSocio();
                 Prestar(m, p);
             }else if (preg == 2){
-                let m = preguntar("Introduce el nombre de la pelicula: ");
+                let m = await preguntar("Introduce el nombre de la pelicula: ");
                 let p = validaSocio();
                 Prestar(m, p);
             }else if (preg == 3){
-                let m = preguntar("Introduce el nombre de la revista: ");
+                let m = await preguntar("Introduce el nombre de la revista: ");
                 let p = validaSocio();
                 Prestar(m, p);
             }else{
@@ -98,7 +113,7 @@ do{
 
         case 7:
             let s = validaSocio();
-            let l = preguntar("Introduce el libro: ");
+            let l = await preguntar("Introduce el libro: ");
             Devolver(s, l);
             break;
 
@@ -189,6 +204,5 @@ function mostrarRecursos(){
         console.log(revistas[i] + " ");
     }
 }
-
 
 
