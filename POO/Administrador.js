@@ -6,7 +6,4 @@ export class Administrador extends Personas{
         this.cargo = cargo;
     }
 }
-function crearSocio(nom, dni, cargo){
-    let nuevoAdmin = new Administrador(nom, dni, cargo);
-    return nuevoAdmin;
-}
+

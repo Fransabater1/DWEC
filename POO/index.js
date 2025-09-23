@@ -13,7 +13,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-function preguntar(pregunta){
+function preguntar(pregunta) {
     return new Promise(resolve => rl.question(pregunta + ' ', r => resolve(r.trim())))
 }
 
@@ -29,13 +29,13 @@ let socios = [];
 let admins = [];
 let pelis = [];
 let libros = [];
-let revistas =[];
+let revistas = [];
 
-do{
-    menu();
-}while(opcion != 12);
+do {
+    await menu();
+} while (opcion != 12);
 
-    async function menu(){
+async function menu() {
     console.log("Menu");
     console.log("1. Añadir Libro");
     console.log("2. Añadir revista");
@@ -51,158 +51,214 @@ do{
     console.log("12. Salir");
     opcion = await preguntar('Elige una opcion: ');
 
-    switch (opcion){
-        case 1:
+    switch (opcion) {
+        case "1":
             let tit = await preguntar("Introduce titulo");
             let dispo = await preguntar("Introduce los ejemplares disponibles: ");
             let aut = await preguntar("Introduce el autor: ");
             let libroCreado = crearLibro(tit, dispo, aut);
-            libroCreado.push(libros);
+            libros.push(libroCreado);
             break;
 
-        case 2:
+        case "2":
             let titu = await preguntar("Introduce titulo");
             let dispon = await preguntar("Introduce los ejemplares disponibles: ");
             let fecha = await preguntar("Introduce la fecha: ");
             let revistaCreada = crearRevista(titu, dispon, fecha);
-            revistaCreada.push(revistas);
+            revistas.push(revistaCreada);
             break;
 
-        case 3:
+        case "3":
             let titulo = await preguntar("Introduce titulo");
             let disponi = await preguntar("Introduce los ejemplares disponibles: ");
             let dir = await preguntar("Introduce el director: ")
             let gen = await preguntar("Introduce el genero: ")
-            let peliCreada = crearPelicua(tit, dispo, dir, gen);
-            peliCreada.push(pelis);
+            let peliCreada = crearPelicua(titulo, disponi, dir, gen);
+            pelis.push(peliCreada);
             break;
 
-        case 4:
+        case "4":
             let nom = await preguntar("Nombre: ");
             let dni = await preguntar("DNI: ");
             let socioCreado = crearSocio(nom, dni);
-            socioCreado.push(socios);
+            socios.push(socioCreado);
             break;
 
-        case 5:
-            let nomb =  preguntar("Nombre: ");
-            let DNI = preguntar("DNI: ");
-            let cargo = preguntar("Cargo: ")
-            let adminCreado = crearAdmin(nom, dni, cargo);
-            adminCreado.push(admins);
+        case "5":
+            let nomb = await preguntar("Nombre: ");
+            let DNI = await preguntar("DNI: ");
+            let cargo = await preguntar("Cargo: ")
+            let adminCreado = await crearAdmin(nomb, DNI, cargo);
+            admins.push(adminCreado);
             break;
 
-        case 6:
-            let preg = await preguntar("1-Libro / 2-Pelicula / 3-Revista: ")
-            if (preg == 1){
-                let m = await preguntar("Introduce el nombre del libro: ");
-                let p = validaSocio();
-                Prestar(m, p);
-            }else if (preg == 2){
-                let m = await preguntar("Introduce el nombre de la pelicula: ");
-                let p = validaSocio();
-                Prestar(m, p);
-            }else if (preg == 3){
-                let m = await preguntar("Introduce el nombre de la revista: ");
-                let p = validaSocio();
-                Prestar(m, p);
-            }else{
+        
+        case "6":
+            let preg = await preguntar("1-Libro / 2-Pelicula / 3-Revista: ");
+            let p = await validaSocio();
+
+            if (!p) {
+                console.log("Socio no válido. Intente de nuevo.");
+                break;
+            }
+
+            let m_nombre = await preguntar("Introduce el nombre del material: ");
+            let materialEncontrado;
+
+            if (preg === "1") {
+                materialEncontrado = libros.find(libro => libro.titulo === m_nombre);
+            } else if (preg === "2") {
+                materialEncontrado = pelis.find(peli => peli.titulo === m_nombre);
+            } else if (preg === "3") {
+                materialEncontrado = revistas.find(revista => revista.titulo === m_nombre);
+            } else {
                 console.log("El servicio no existe");
+                break;
+            }
+
+            if (materialEncontrado) {
+                Prestar(materialEncontrado, p);
+            } else {
+                console.log("Material no encontrado.");
             }
             break;
 
-        case 7:
-            let s = validaSocio();
-            let l = await preguntar("Introduce el libro: ");
-            Devolver(s, l);
-            break;
+      
+            case "7":
+    let socioParaDevolver = await validaSocio();
+    if (socioParaDevolver) {
+        let tituloLibro = await preguntar("Introduce el título del libro a devolver: ");
+        let libroParaDevolver = libros.find(libro => libro.titulo === tituloLibro);
+        if (libroParaDevolver) {
+            Devolver(socioParaDevolver, libroParaDevolver);
+        } else {
+            console.log("El libro no se encuentra en nuestra base de datos.");
+        }
+    }
+    break;
 
-        case 8:
+        case "8":
             mostrarRecursos();
             break;
-        case 9:
+        case "9":
             mostrarSocios();
             break;
 
-        case 10:
+        case "10":
             mostrarAdministrador();
-
-        case 11:
-            let socio = validaSocio();
-            mostrarRecursosS(socio);
             break;
-            
-    }
-    }
-    
 
-function Prestar(m, p){
-    if (m.disponibles <= 0){
+        case "11":
+    let socioRecursos = await validaSocio();
+    if (socioRecursos) {
+        mostrarRecursosS(socioRecursos);
+    }
+    break;
+
+
+    }
+}
+
+
+function Prestar(m, p) {
+    if (m.disponibles <= 0) {
         console.log("No quedan disponibles");
-    }else if( p.listaL.length >= 3){
+    } else if (p.listaL.length >= 3) {
         console.log("Has superado el limite de libros prestados");
-    }else{
-        m.push(p.listaL);
-        m.disponibles-1;
+    } else {
+        p.listaL.push(m);
+        m.disponibles--;
         console.log("Libro agregador correctamente")
     }
 }
 
-function Devolver(s, l){
-    for (i = 0; i<s.listaL.length; i++){
-        if (s.listaL[i] == l){
-            s.listaL = s.listaL.filter(x => x !== l);
-            l.disponibles +1;
-            console.log("Libro devuleto exitosamente");
-        }else{
-            console.log("El usuario no tiene ese libro");
+function Devolver(s, l) {
+    let libroDevuelto = false;
+
+    for (let i = 0; i < s.listaL.length; i++) {
+        if (s.listaL[i] === l) {
+            s.listaL.splice(i, 1);
+            l.disponibles++;
+            console.log("Libro devuelto exitosamente");
+            libroDevuelto = true;
+            break;
         }
     }
-}
-
-function mostrarSocios(){
-    for (i=0; i<socios.length; i++){
-        console.log(socios[i]+ " ");
+    if (!libroDevuelto) {
+        console.log("El usuario no tiene ese libro");
     }
 }
 
-function mostrarAdministrador(){
-    for (i=0; i<admins.length; i++){
-        console.log(socios[i]+ " ");
+function mostrarSocios() {
+    for (let i = 0; i < socios.length; i++) {
+        console.log(socios[i] + " ");
     }
 }
 
-function mostrarRecursosS(socio){
-    for (i=0; i<admins.length; i++){
-        console.log(socio.listaL[i]+ " ");
+function mostrarAdministrador() {
+    for (let i = 0; i < admins.length; i++) {
+        console.log(admins[i] + " "); 
     }
 }
 
-async function validaSocio(){
+function mostrarRecursosS(socio) {
+    if (socio.listaL.length === 0) {
+        console.log("El socio no tiene recursos prestados.");
+        return;
+    }
+    for (let i = 0; i < socio.listaL.length; i++) { 
+        console.log(socio.listaL[i] + " ");
+    }
+}
+
+async function validaSocio() {
     let dni = await preguntar("Dime tu dni: ")
-    for (i = 0; i<socios.length; i++){
-        if (dni == socios[i].dni){
-            nombre = socios[i];
-            return nombre;
-        }else{
-            console.log("No se encuentra el socio")
+    for (let i = 0; i < socios.length; i++) {
+        if (dni == socios[i].dni) {
+            return socios[i];
         }
     }
+    console.log("No se encuentra el socio")
+    return undefined;
 }
 
-function mostrarRecursos(){
+function mostrarRecursos() {
     console.log("Libros")
-    for(i = 0; i<libros.length; i++){
+    for (let i = 0; i < libros.length; i++) {
         console.log(libros[i] + " ");
     }
     console.log("Peliculas")
-    for(i = 0; i<libros.length; i++){
+    for (let i = 0; i < pelis.length; i++) { 
         console.log(pelis[i] + " ");
     }
     console.log("Revistas")
-    for(i = 0; i<libros.length; i++){
+    for (let i = 0; i < revistas.length; i++) { 
         console.log(revistas[i] + " ");
     }
 }
 
+function crearPelicua(titulo, disponi, dir, gen) {
+    let nuevaPeli = new Pelicula(titulo, disponi, dir, gen);
+    return nuevaPeli;
+}
 
+function crearAdmin(nom, dni, cargo) {
+    let nuevoAdmin = new Administrador(nom, dni, cargo);
+    return nuevoAdmin;
+}
+
+
+function crearRevista(tit, dispo, fecha) {
+    let nuevaRevista = new Revista(tit, dispo, fecha);
+    return nuevaRevista;
+}
+
+function crearSocio(nom, dni) {
+    let nuevoSocio = new Socios(nom, dni);
+    return nuevoSocio;
+}
+
+function crearLibro(tit, dispo, aut) {
+    let nuevoLibro = new Libros(tit, dispo, aut);
+    return nuevoLibro;
+}

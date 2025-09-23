@@ -7,7 +7,3 @@ export class Libros extends Material{
     }
 }
 
-function crearLibro(tit, dispo, aut){
-    let nuevoLibro = new Libros(tit, dispo, aut);
-    return nuevoLibro;
-}

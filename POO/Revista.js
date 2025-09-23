@@ -7,8 +7,5 @@ export class Revista extends Material{
     }
 }
 
-function crearRevista(tit, dispo, fecha){
-    let nuevaRevista = new Revista(tit, dispo, fecha);
-    return nuevaRevista;
-}
+
 

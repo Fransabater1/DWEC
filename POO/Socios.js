@@ -7,8 +7,5 @@ export class Socios extends Personas{
     }
 }
 
-function crearSocio(nom, dni){
-    let nuevoSocio = new Socios(nom, dni);
-    return nuevoSocio;
-}
+
 
