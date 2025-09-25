@@ -5,5 +5,10 @@ export class Administrador extends Personas{
         super(nombre, dni);
         this.cargo = cargo;
     }
+    toString(){
+        return super(this.toString);
+    }
 }
+
+
 

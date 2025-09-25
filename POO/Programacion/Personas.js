@@ -3,4 +3,8 @@ export class Personas{
         this.nombre = nombre;
         this.dni = dni;
     }
+
+    toString(){
+        return `Nombre: ${this.nombre} | DNI: ${dni}`;
+    }
 }

@@ -5,6 +5,9 @@ export class Socios extends Personas{
         super(nombre, dni);
         this.listaL = [];
     }
+    toString(){
+        return `${super.toString()} | Recursos: ${this.listaL,length} `;
+    }
 }
 
 

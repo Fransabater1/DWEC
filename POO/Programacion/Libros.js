@@ -5,5 +5,10 @@ export class Libros extends Material{
         super(titulo, disponibles);
         this.autor = autor;
     }
+
+    toString(){
+        return `${super.toString()} | Autor: ${this.autor}`;
+    }
+    
 }
 

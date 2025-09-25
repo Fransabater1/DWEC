@@ -5,6 +5,10 @@ export class Revista extends Material{
         super(titulo, disponibles);
         this.fecha = fecha;
     }
+
+    toString(){
+        return `${super.toString()} | Autor: ${this.autor} | Fecha: ${this.fecha}`;
+    }
 }
 
 

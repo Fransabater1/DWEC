@@ -1,22 +1,23 @@
-import { Administrador } from './Administrador.js';
-import { Libros } from './Libros.js';
-import { Pelicula } from './Pelicula.js';
-import { Revista } from './Revista.js';
-import { Socios } from './Socios.js';
+import { Administrador } from "./Administrador.js";
+import { Libros } from "./Libros.js";
+import { Pelicula } from "./Pelicula.js";
+import { Revista } from "./Revista.js";
+import { Socios } from "./Socios.js";
 import readline from "readline";
 import { Personas } from "./Personas.js";
-import { Material } from './Material.js';
-import { normalize } from 'path';
+import { Material } from "./Material.js";
+import { normalize } from "path";
 
 const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
 });
 
 function preguntar(pregunta) {
-    return new Promise(resolve => rl.question(pregunta + ' ', r => resolve(r.trim())))
+    return new Promise((resolve) =>
+        rl.question(pregunta + " ", (r) => resolve(r.trim()))
+    );
 }
-
 
 const libro1 = new Libros("Wiggeta", "Willyrex", 20);
 const pelicula1 = new Pelicula("Seven", "David Fincher", "drama", 5);
@@ -49,7 +50,7 @@ async function menu() {
     console.log("10. Lista de admins");
     console.log("11. Lista de recuros de socios");
     console.log("12. Salir");
-    opcion = await preguntar('Elige una opcion: ');
+    opcion = await preguntar("Elige una opcion: ");
 
     switch (opcion) {
         case "1":
@@ -71,8 +72,8 @@ async function menu() {
         case "3":
             let titulo = await preguntar("Introduce titulo");
             let disponi = await preguntar("Introduce los ejemplares disponibles: ");
-            let dir = await preguntar("Introduce el director: ")
-            let gen = await preguntar("Introduce el genero: ")
+            let dir = await preguntar("Introduce el director: ");
+            let gen = await preguntar("Introduce el genero: ");
             let peliCreada = crearPelicua(titulo, disponi, dir, gen);
             pelis.push(peliCreada);
             break;
@@ -87,12 +88,11 @@ async function menu() {
         case "5":
             let nomb = await preguntar("Nombre: ");
             let DNI = await preguntar("DNI: ");
-            let cargo = await preguntar("Cargo: ")
+            let cargo = await preguntar("Cargo: ");
             let adminCreado = await crearAdmin(nomb, DNI, cargo);
             admins.push(adminCreado);
             break;
 
-        
         case "6":
             let preg = await preguntar("1-Libro / 2-Pelicula / 3-Revista: ");
             let p = await validaSocio();
@@ -102,15 +102,22 @@ async function menu() {
                 break;
             }
 
-            let m_nombre = await preguntar("Introduce el nombre del material: ");
-            let materialEncontrado;
+            
 
             if (preg === "1") {
-                materialEncontrado = libros.find(libro => libro.titulo === m_nombre);
+                let m_nombre = await preguntar("Introduce el nombre del material: ");
+                let materialEncontrado;
+                materialEncontrado = libros.find((libro) => libro.titulo === m_nombre);
             } else if (preg === "2") {
-                materialEncontrado = pelis.find(peli => peli.titulo === m_nombre);
+                let m_nombre = await preguntar("Introduce el nombre del material: ");
+                let materialEncontrado;
+                materialEncontrado = pelis.find((peli) => peli.titulo === m_nombre);
             } else if (preg === "3") {
-                materialEncontrado = revistas.find(revista => revista.titulo === m_nombre);
+                let m_nombre = await preguntar("Introduce el nombre del material: ");
+                let materialEncontrado;
+                materialEncontrado = revistas.find(
+                    (revista) => revista.titulo === m_nombre
+                );
             } else {
                 console.log("El servicio no existe");
                 break;
@@ -123,19 +130,22 @@ async function menu() {
             }
             break;
 
-      
-            case "7":
-    let socioParaDevolver = await validaSocio();
-    if (socioParaDevolver) {
-        let tituloLibro = await preguntar("Introduce el título del libro a devolver: ");
-        let libroParaDevolver = libros.find(libro => libro.titulo === tituloLibro);
-        if (libroParaDevolver) {
-            Devolver(socioParaDevolver, libroParaDevolver);
-        } else {
-            console.log("El libro no se encuentra en nuestra base de datos.");
-        }
-    }
-    break;
+        case "7":
+            let socioParaDevolver = await validaSocio();
+            if (socioParaDevolver) {
+                let tituloLibro = await preguntar(
+                    "Introduce el título del libro a devolver: "
+                );
+                let libroParaDevolver = libros.find(
+                    (libro) => libro.titulo === tituloLibro
+                );
+                if (libroParaDevolver) {
+                    Devolver(socioParaDevolver, libroParaDevolver);
+                } else {
+                    console.log("El libro no se encuentra en nuestra base de datos.");
+                }
+            }
+            break;
 
         case "8":
             mostrarRecursos();
@@ -149,16 +159,13 @@ async function menu() {
             break;
 
         case "11":
-    let socioRecursos = await validaSocio();
-    if (socioRecursos) {
-        mostrarRecursosS(socioRecursos);
-    }
-    break;
-
-
+            let socioRecursos = await validaSocio();
+            if (socioRecursos) {
+                mostrarRecursosS(socioRecursos);
+            }
+            break;
     }
 }
-
 
 function Prestar(m, p) {
     if (m.disponibles <= 0) {
@@ -168,7 +175,7 @@ function Prestar(m, p) {
     } else {
         p.listaL.push(m);
         m.disponibles--;
-        console.log("Libro agregador correctamente")
+        console.log("Libro agregador correctamente");
     }
 }
 
@@ -197,7 +204,7 @@ function mostrarSocios() {
 
 function mostrarAdministrador() {
     for (let i = 0; i < admins.length; i++) {
-        console.log(admins[i] + " "); 
+        console.log(admins[i] + " ");
     }
 }
 
@@ -206,33 +213,33 @@ function mostrarRecursosS(socio) {
         console.log("El socio no tiene recursos prestados.");
         return;
     }
-    for (let i = 0; i < socio.listaL.length; i++) { 
+    for (let i = 0; i < socio.listaL.length; i++) {
         console.log(socio.listaL[i] + " ");
     }
 }
 
 async function validaSocio() {
-    let dni = await preguntar("Dime tu dni: ")
+    let dni = await preguntar("Dime tu dni: ");
     for (let i = 0; i < socios.length; i++) {
         if (dni == socios[i].dni) {
             return socios[i];
         }
     }
-    console.log("No se encuentra el socio")
+    console.log("No se encuentra el socio");
     return undefined;
 }
 
 function mostrarRecursos() {
-    console.log("Libros")
+    console.log("Libros");
     for (let i = 0; i < libros.length; i++) {
         console.log(libros[i] + " ");
     }
-    console.log("Peliculas")
-    for (let i = 0; i < pelis.length; i++) { 
+    console.log("Peliculas");
+    for (let i = 0; i < pelis.length; i++) {
         console.log(pelis[i] + " ");
     }
-    console.log("Revistas")
-    for (let i = 0; i < revistas.length; i++) { 
+    console.log("Revistas");
+    for (let i = 0; i < revistas.length; i++) {
         console.log(revistas[i] + " ");
     }
 }
@@ -246,7 +253,6 @@ function crearAdmin(nom, dni, cargo) {
     let nuevoAdmin = new Administrador(nom, dni, cargo);
     return nuevoAdmin;
 }
-
 
 function crearRevista(tit, dispo, fecha) {
     let nuevaRevista = new Revista(tit, dispo, fecha);

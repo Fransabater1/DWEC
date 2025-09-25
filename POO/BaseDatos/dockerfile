@@ -1,0 +1,6 @@
+FROM mysql/mysql-server:latest
+ENV MYSQL_ROOT_PASSWORD=fran1234
+ENV MYSQL_DATABASE=BibliotecaPOO
+ENV MYSQL_USER=fran
+ENV MYSQL_PASSWORD=fran1234
+COPY crear.sql /docker-entrypoint-initdb.d/
