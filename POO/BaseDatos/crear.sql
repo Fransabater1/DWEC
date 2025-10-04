@@ -1,57 +1,101 @@
-use BibliotecaPOO;
-create table Biblioteca(
-    nombre VARCHAR(30) PRIMARY key,
-    ciudad VARCHAR(30)
+DROP DATABASE IF EXISTS biblioteca_gen;
+CREATE DATABASE IF NOT EXISTS biblioteca_gen;
+USE biblioteca_gen;
+
+CREATE TABLE biblioteca (
+    id_biblioteca INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    pueblo VARCHAR(50)
 );
 
-create table Material(
-    biblioteca VARCHAR(30),
-    titulo varchar(30),
-    disponibles int,
-    PRIMARY key(titulo, disponibles, biblioteca),
-    Foreign Key (biblioteca) REFERENCES Biblioteca(nombre) 
+CREATE TABLE tipo_recursos (
+    id_tipo INT AUTO_INCREMENT PRIMARY KEY,
+    tipo VARCHAR(30) UNIQUE NOT NULL
 );
 
-create table Libros(
-    titulo VARCHAR(30),
-    disponibles int,
-    autor VARCHAR(30),
-    Foreign Key (titulo, disponibles) REFERENCES Material(titulo, disponibles)
+CREATE TABLE recursos (
+    id_recurso INT AUTO_INCREMENT PRIMARY KEY,
+    id_biblioteca INT NOT NULL,
+    titulo VARCHAR(100) NOT NULL,
+    disponibles INT DEFAULT 0,
+    id_tipo INT NOT NULL,
+    FOREIGN KEY (id_biblioteca) REFERENCES biblioteca(id_biblioteca),
+    FOREIGN KEY (id_tipo) REFERENCES tipo_recursos(id_tipo)
 );
 
-create table Pelicula(
-    titulo VARCHAR(30),
-    disponibles int,
-    director VARCHAR(30),
-    genero varchar(30),
-    Foreign Key (titulo, disponibles) REFERENCES Material(titulo, disponibles)
+CREATE TABLE personas (
+    id_persona INT AUTO_INCREMENT PRIMARY KEY,
+    id_biblioteca INT NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    dni VARCHAR(15) UNIQUE NOT NULL,
+    tipo ENUM('socio','administrador') NOT NULL,
+    FOREIGN KEY (id_biblioteca) REFERENCES biblioteca(id_biblioteca)
 );
 
-create table Revista(
-    titulo VARCHAR(30),
-    disponibles int,
-    fecha date,
-    Foreign Key (titulo, disponibles) REFERENCES Material(titulo, disponibles)
+CREATE TABLE libros (
+    id_libro INT PRIMARY KEY,
+    autor VARCHAR(100),
+    FOREIGN KEY (id_libro) REFERENCES recursos(id_recurso)
 );
 
-create table Personas(
-    biblioteca varchar(30),
-    nombre varchar(30),
-    dni varchar(9),
-    PRIMARY key(nombre, dni, biblioteca),
-    Foreign Key (biblioteca) REFERENCES Biblioteca(nombre)
+CREATE TABLE revistas (
+    id_revista INT PRIMARY KEY,
+    autor VARCHAR(100),
+    fecha_publicacion DATE,
+    FOREIGN KEY (id_revista) REFERENCES recursos(id_recurso)
 );
 
-create table Socios(
-    nombre varchar(30),
-    dni varchar(9),
-    recursos json,
-    Foreign Key (nombre, dni) REFERENCES Personas(nombre, dni)
+CREATE TABLE peliculas (
+    id_pelicula INT PRIMARY KEY,
+    director VARCHAR(100),
+    genero VARCHAR(50),
+    FOREIGN KEY (id_pelicula) REFERENCES recursos(id_recurso)
 );
 
-create table Administrador(
-    nombre varchar(30),
-    dni varchar(9),
-    cargo varchar(30),
-    Foreign Key (nombre, dni) REFERENCES Personas(nombre, dni)
+CREATE TABLE socios (
+    id_persona INT PRIMARY KEY,
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona)
 );
+
+CREATE TABLE administradores (
+    id_persona INT PRIMARY KEY,
+    cargo VARCHAR(50),
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona)
+);
+
+CREATE TABLE prestamos (
+    id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+    id_persona INT NOT NULL,
+    id_recurso INT NOT NULL,
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE,
+    devuelto BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_persona) REFERENCES personas(id_persona),
+    FOREIGN KEY (id_recurso) REFERENCES recursos(id_recurso)
+);
+
+DELIMITER //
+CREATE TRIGGER bajar_disponibles
+BEFORE INSERT ON prestamos
+FOR EACH ROW
+BEGIN
+    UPDATE recursos
+    SET disponibles = disponibles - 1
+    WHERE id_recurso = NEW.id_recurso AND disponibles > 0;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER subir_disponibles
+AFTER UPDATE ON prestamos
+FOR EACH ROW
+BEGIN
+    IF NEW.devuelto = TRUE THEN
+        UPDATE recursos
+        SET disponibles = disponibles + 1
+        WHERE id_recurso = NEW.id_recurso;
+    END IF;
+END;
+//
+DELIMITER ;
